@@ -12,10 +12,22 @@ const int inpHeight = 416;
 const int inpWidth = 416;
 const double confThreshold = 0.5;
 const double nmsThreshold = 0.4;
-const string modelConfiguration = "/home/emilyjr/Packages/darknet/cfg/yolov3.cfg";
-const string modelWeights = "/home/emilyjr/Packages/darknet/yolov3.weights";
-const string classesFile = "/home/emilyjr/Packages/darknet/data/coco.names";
+const string modelConfiguration = "/home/emilyjr/Packages/darknet/cfg/yolov3.cfg"; // please configure this to correct path
+const string modelWeights = "/home/emilyjr/Packages/darknet/yolov3.weights"; // please configure this to correct path
+const string classesFile = "/home/emilyjr/Packages/darknet/data/coco.names"; // please configure this to correct path
 
+void help(const string& message)
+{
+    cout << "Program init error: " << message << endl;
+    cout << "\nUsage : [program_name] [rgb_file] [depth_file] [cloud_file] [subsample_leaf_size] [outlier_removal_thresh] [detector_file]"<< endl;
+    cout << "[rgb file]:               input rgb image (.jpg, .png)" << endl
+         << "[depth file]:             input depth map (.tiff, .exr)" << endl
+         << "[cloud file]:             input point cloud (.ply)" << endl
+         << "[subsample_leaf_size]:    leaf size of voxelgrid for subsampling" << endl
+         << "[outlier_removal_thresh]: distance threshold for statistical outlier removal" << endl
+         << "[detector_file]:          trained PPF_3D_Detector file" << endl;
+    cout << "\nPlease start again with new parameters"<< endl;
+}
 int main(int argc, char** argv)
 {   
     // Parameters
@@ -26,6 +38,10 @@ int main(int argc, char** argv)
     Mat CameraIntr;
     eigen2cv(CameraIntr_tmp, CameraIntr);
 
+    if (argc < 7){
+        help("Not Enough Arguments");
+        exit(1);
+    }
     const string img_filename = argv[1];
     const string depth_filename = argv[2];
     const string cloud_filename = argv[3];
