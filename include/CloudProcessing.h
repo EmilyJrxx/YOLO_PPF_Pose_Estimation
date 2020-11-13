@@ -76,6 +76,15 @@ namespace ppf
                 //     if_trained[i] = false;
                 // }
             }
+            CloudProcessor(double relativeSamplingStep_input=0.025,
+                double relativeDistanceStep_input = 0.05)
+            {              
+                relativeSamplingStep = relativeSamplingStep_input;
+                relativeDistanceStep = relativeDistanceStep_input;
+                // for (int i = 0; i < if_trained.size(); i++){
+                //     if_trained[i] = false;
+                // }
+            }
             ~CloudProcessor(){
                 for (uint32_t i = 0; i < detectors.size(); i++){
                     detectors[i].~PPF3DDetector();
@@ -118,6 +127,8 @@ namespace ppf
              << " sec" << endl;
         
         if_trained[id] = true;
+        cout << if_trained[id] << endl;
+        cout << name << endl;
     }
     void CloudProcessor::ReloadScenes(PointCloud<PointXYZ>::Ptr scene_input, Mat depth_input, vector<Rect>& boxes_input, 
                 vector<int>& classIds_input, vector<int>& indices_input)
@@ -314,12 +325,15 @@ namespace ppf
             // boundingbox_3d -> push_back(right_top_front);
             // boundingbox_3d -> push_back(right_bot_front);
             
+            cout << "creating hull" << endl; //debug
             ConvexHull<PointXYZ> hull;
             hull.setInputCloud(boundingbox_3d);
             hull.setDimension(3);
             vector<Vertices> polygons;
             PointCloud<PointXYZ>::Ptr surface_hull (new PointCloud<PointXYZ>);
+            cout << "reconstructing hull" << endl; //debug
             hull.reconstruct(*surface_hull, polygons);
+            cout << "creating crophull" << endl; //debug
             PointCloud<PointXYZ>::Ptr cropped (new PointCloud<PointXYZ>);
             CropHull<PointXYZ> bb_filter;  
 
@@ -329,6 +343,7 @@ namespace ppf
             bb_filter.setInputCloud(scene_tmp);
             bb_filter.setHullIndices(polygons);
             bb_filter.setHullCloud(surface_hull);
+            cout << "crophull cropping" << endl; //debug
             bb_filter.filter(*cropped);
 
             printf("Cropping : %d / %d \n", scene_tmp->size(), cropped->size());
@@ -478,7 +493,7 @@ namespace ppf
         
         // TODO: Pose Validation
     }
-    Pose3D CloudProcessor::Matching_S2B(const string name, Mat scene, Mat edge, double relativeSceneSampleStep = 0.05, 
+    Pose3D CloudProcessor::Matching_S2B(const string name, Mat scene, Mat edge, double relativeSceneSampleStep = 0.0714, 
                                   double relativeSceneDistance = 0.05)
     {
         int id = label_to_id[name];

@@ -12,9 +12,9 @@ const int inpHeight = 416;
 const int inpWidth = 416;
 const double confThreshold = 0.5;
 const double nmsThreshold = 0.4;
-const string modelConfiguration = "/home/emilyjr/Packages/darknet/cfg/yolov3.cfg"; // please configure this to correct path
-const string modelWeights = "/home/emilyjr/Packages/darknet/yolov3.weights"; // please configure this to correct path
-const string classesFile = "/home/emilyjr/Packages/darknet/data/coco.names"; // please configure this to correct path
+const string modelConfiguration = "/home/xxwang/Packages/darknet/cfg/yolov3.cfg"; // please configure this to correct path
+const string modelWeights = "/home/xxwang/Packages/darknet/yolov3.weights"; // please configure this to correct path
+const string classesFile = "/home/xxwang/Packages/darknet/data/coco.names"; // please configure this to correct path
 
 void help(const string& message)
 {
@@ -30,6 +30,7 @@ void help(const string& message)
 }
 int main(int argc, char** argv)
 {   
+    
     // Parameters
     Eigen::MatrixXd CameraIntr_tmp(3, 4);
     CameraIntr_tmp << 614.384, 0.0, 638.121, 0.0,
@@ -110,22 +111,26 @@ int main(int argc, char** argv)
     }
 
     // PPF detector load 3D model
-    string bottle_file = "/home/emilyjr/ppf_matching/src/Camera/clouds/20200817/bottle_remesh_meter_normalized.ply";
+    string bottle_file = "../data/bottle_remesh_meter_normalized.ply";
+    string trained_detector = "../data/detector_bottle.xml";
     Mat bottle = ppf_match_3d::loadPLYSimple(bottle_file.c_str(), 1);
     cloud_processor.LoadSingleModel(bottle, "bottle");
+
     // PPF detector load saved model
     cloud_processor.LoadTrainedDetector("bottle", detector_filename);
+    // PPF training detector
+    // cloud_processor.TrainDetector(trained_detector, true);
     // PPF Matching
     Mat object_wn_mat, edges_mat;
     cloud_processor.PointCloudXYZNormalToMat(object_wn_mat, objects_with_normals[0].makeShared());
     cloud_processor.PointCloudXYZNormalToMat(edges_mat, object_edges[0].makeShared());
-    Pose3D result_pose = cloud_processor.Matching_S2B("bottle", object_wn_mat, edges_mat);
+    Pose3D result_pose = cloud_processor.Matching("bottle", object_wn_mat);
     cout << "Result Pose: " << endl;
     result_pose.printPose(); // print pose
     Mat object_trans = transformPCPose(bottle, result_pose.pose);
     cout << "Transformed. " << endl;
-    writePLY(object_trans, argv[7]);
-    cout << "Written. " << endl;
+    // writePLY(object_trans, argv[7]);
+    // cout << "Written. " << endl;
 
     return 0;
 }
