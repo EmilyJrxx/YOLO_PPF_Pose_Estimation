@@ -15,7 +15,7 @@
 using namespace std;
 using namespace pcl;
 // string origPCfilename = "./data/scenes/rs1.ply";
-const Eigen::Vector4f subsampling_leaf_size (0.5f, 0.5f, 0.5f, 0.5f);
+const Eigen::Vector4f subsampling_leaf_size (1.2f, 1.2f, 1.2f, 1.2f);
 
 typedef PointXYZ PointT;
 
@@ -50,7 +50,7 @@ int main (int argc, char** argv)
 
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
     sor.setInputCloud (cloud);
-    sor.setMeanK (10);
+    sor.setMeanK (30);
     sor.setStddevMulThresh (1.2);
     sor.filter (*cloud_filtered);
 
