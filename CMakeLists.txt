@@ -64,12 +64,16 @@ add_executable(sac_cylinder src/sac_cylinder.cpp)
 add_executable(sac_sphere src/sac_sphere.cpp)
 add_executable(YOLO_PPF_Multi src/YOLO_cropping_ppf_test_multi.cpp)
 add_executable(YOLO_Detection src/ObjectDetection-YOLO/object_detection_yolo.cpp)
+add_executable(grasp_localization src/grasping_localization/grasp_localization.cpp)
+add_executable(write_contact_label src/grasping_localization/write_contact_label.cpp)
 target_compile_features(YOLO_PPF_Pose_Estimation PUBLIC cxx_std_11)
 target_compile_features(crophull_test PUBLIC cxx_std_11)
 target_compile_features(mls_filtering PUBLIC cxx_std_11)
 target_compile_features(sac_cylinder PUBLIC cxx_std_11)
 target_compile_features(sac_sphere PUBLIC cxx_std_11)
 target_compile_features(YOLO_PPF_Multi PUBLIC cxx_std_11)
+target_compile_features(grasp_localization PUBLIC cxx_std_11)
+target_compile_features(write_contact_label PUBLIC cxx_std_11)
 target_link_libraries(YOLO_PPF_Pose_Estimation
 	${Eigen3_LIBS}
 	#${OpenCV_CORE_LIBRARIES}
@@ -154,6 +158,38 @@ target_link_libraries(sac_cylinder
 target_link_libraries(sac_sphere
 	${Eigen3_LIBS}
 	${PCL_LIBRARIES}
+        ${PCL_COMMON_LIBRARIES}
+        ${PCL_IO_LIBRARIES}
+        ${PCL_FEATURES_LIBRARIES}
+        ${PCL_KDTREE_LIBRARIES}
+        ${PCL_FILTERS_LIBRARIES}
+        ${PCL_SURFACE_LIBRARIES}
+        ${PCL_SAMPLE_CONSENSUS_LIBRARIES}
+        ${PCL_SEGMENTATION_LIBRARIES}
+        ${PCL_VISUALIZATION_LIBRARIES}
+        ${Boost_FILESYSTEM_LIBRARIES}
+        ${Boost_SYSTEM_LIBRARIES}
+        ${Boost_THREAD_LIBRARIES}
+        )
+target_link_libraries(grasp_localization
+        ${Eigen3_LIBS}
+        ${PCL_LIBRARIES}
+        ${PCL_COMMON_LIBRARIES}
+        ${PCL_IO_LIBRARIES}
+        ${PCL_FEATURES_LIBRARIES}
+        ${PCL_KDTREE_LIBRARIES}
+        ${PCL_FILTERS_LIBRARIES}
+        ${PCL_SURFACE_LIBRARIES}
+        ${PCL_SAMPLE_CONSENSUS_LIBRARIES}
+        ${PCL_SEGMENTATION_LIBRARIES}
+        ${PCL_VISUALIZATION_LIBRARIES}
+        ${Boost_FILESYSTEM_LIBRARIES}
+        ${Boost_SYSTEM_LIBRARIES}
+        ${Boost_THREAD_LIBRARIES}
+        )
+target_link_libraries(write_contact_label
+        ${Eigen3_LIBS}
+        ${PCL_LIBRARIES}
         ${PCL_COMMON_LIBRARIES}
         ${PCL_IO_LIBRARIES}
         ${PCL_FEATURES_LIBRARIES}

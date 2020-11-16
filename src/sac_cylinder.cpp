@@ -52,7 +52,7 @@ main (int argc, char** argv)
   // Estimate point normals
   ne.setSearchMethod (tree);
   ne.setInputCloud (cloud);
-  ne.setKSearch (50);
+  ne.setKSearch (30);
   ne.compute (*cloud_normals);
   cout << "normal computed" << endl;
   // Create the segmentation object for the planar model and set all the parameters
@@ -61,7 +61,7 @@ main (int argc, char** argv)
   seg.setNormalDistanceWeight (0.1);
   seg.setMethodType (pcl::SAC_RANSAC);
   seg.setMaxIterations (100);
-  seg.setDistanceThreshold (0.03);
+  seg.setDistanceThreshold (0.1);
   seg.setInputCloud (cloud);
   seg.setInputNormals (cloud_normals);
   // Obtain the plane inliers and coefficients
@@ -77,7 +77,7 @@ main (int argc, char** argv)
   pcl::PointCloud<PointT>::Ptr cloud_plane (new pcl::PointCloud<PointT> ());
   extract.filter (*cloud_plane);
   std::cerr << "PointCloud representing the planar component: " << cloud_plane->size () << " data points." << std::endl;
-  writer.write ("table_scene_mug_stereo_textured_plane.pcd", *cloud_plane, false);
+  writer.write ("table_scene_mug_stereo_textured_plane.ply", *cloud_plane, false);
 
   // Remove the planar inliers, extract the rest
   extract.setNegative (true);
@@ -94,7 +94,7 @@ main (int argc, char** argv)
   seg.setNormalDistanceWeight (0.1);
   seg.setMaxIterations (10000);
   seg.setDistanceThreshold (0.05);
-  seg.setRadiusLimits (0, 0.1);
+  seg.setRadiusLimits (0, 500);
   seg.setInputCloud (cloud_filtered2);
   seg.setInputNormals (cloud_normals2);
 
@@ -128,6 +128,7 @@ main (int argc, char** argv)
   pcl::visualization::PCLVisualizer viewer ("cloud viewer");
   pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> blue (cloud_cylinder, 100,100,255);
   viewer.addPointCloud(cloud_cylinder, blue, "cloud");
+  // viewer.setBackgroundColor(255, 255, 255);
   pcl::ModelCoefficients line_coeff;
   line_coeff.values.resize(6);
   line_coeff.values[0] = cyl_centroid.x;
@@ -138,6 +139,7 @@ main (int argc, char** argv)
   line_coeff.values[5] = coefficients_cylinder->values[5];
   // viewer.addLine(line_coeff, "line_axis");
   viewer.addPointCloud(markers, "markers");
+  viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 7, "cloud");
   viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 7, "markers");
 
   while(!viewer.wasStopped())
